@@ -1,4 +1,5 @@
 {
+ "database_type" : "mysqli",
  "database_server" : "localhost",
  "database_user" : "root",
  "database_password" : "",
