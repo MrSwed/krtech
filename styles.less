@@ -1,0 +1,31 @@
+.table {
+	display: table;
+	border-spacing: 1em;
+	margin: 0 auto;
+	> * {
+		display: table-row;
+		> * {
+			display: table-cell;
+		}
+	}
+}
+label {
+	display: block;
+}
+
+.required >*:first-child{
+	&:before {
+		content:'*';
+	}
+}
+
+.message {
+	text-align: center;
+}
+
+.error {
+	color: red;
+}
+.info {
+	color: green;
+}

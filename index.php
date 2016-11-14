@@ -1,4 +1,5 @@
-<?
+<?php
+
 $base_path = str_replace('\\','/',dirname(__FILE__)) . '/';
 
 // get start time
@@ -19,11 +20,25 @@ p{ margin:20px 0; }
 a{font-size:2em;color:#f22;text-decoration:underline;margin-top: 30px;padding: 5px;}
 </style>
 <div class=\"install\">
-<p>Configuration file cannot be found.</p>
+<p>Configuration file cannot be found or an error in JSON format.</p>
 </div>";
 	exit;
 }
 
+$rt = include_once($base_path.'/includes/datahandler.inc.php');
+$system = new DataHandler;
+
+$form = [];
+$form["services"] = $system->getServices();
+
+if ($_SERVER["HTTP_X_REQUESTED_WITH"]=="XMLHttpRequest") {
+	header('Content-Type: application/json');
+	$data = $system->getDiscount($_REQUEST);
+	
+	 echo json_encode($data);
+	 return true;
+} else 
+include_once($base_path.'/view/frontend.php');
 
 
 ?>
