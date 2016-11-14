@@ -554,44 +554,6 @@ class DBAPI {
     *         pagerStyle
     *
     */
-   function getHTMLGrid($dsq, $params) {
-      if (!is_resource($dsq))
-         $dsq = $this->query($dsq);
-      if ($dsq) {
-         include_once MODX_MANAGER_PATH . 'includes/controls/datagrid.class.php';
-         $grd = new DataGrid('', $dsq);
-
-         $grd->noRecordMsg = $params['noRecordMsg'];
-
-         $grd->columnHeaderClass = $params['columnHeaderClass'];
-         $grd->cssClass = $params['cssClass'];
-         $grd->itemClass = $params['itemClass'];
-         $grd->altItemClass = $params['altItemClass'];
-
-         $grd->columnHeaderStyle = $params['columnHeaderStyle'];
-         $grd->cssStyle = $params['cssStyle'];
-         $grd->itemStyle = $params['itemStyle'];
-         $grd->altItemStyle = $params['altItemStyle'];
-
-         $grd->columns = $params['columns'];
-         $grd->fields = $params['fields'];
-         $grd->colWidths = $params['colWidths'];
-         $grd->colAligns = $params['colAligns'];
-         $grd->colColors = $params['colColors'];
-         $grd->colTypes = $params['colTypes'];
-         $grd->colWraps = $params['colWraps'];
-
-         $grd->cellPadding = $params['cellPadding'];
-         $grd->cellSpacing = $params['cellSpacing'];
-         $grd->header = $params['header'];
-         $grd->footer = $params['footer'];
-         $grd->pageSize = $params['pageSize'];
-         $grd->pagerLocation = $params['pagerLocation'];
-         $grd->pagerClass = $params['pagerClass'];
-         $grd->pagerStyle = $params['pagerStyle'];
-         return $grd->render();
-      }
-   }
 
    
    
