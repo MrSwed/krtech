@@ -19,10 +19,10 @@ class DataHandler {
 		*/
 	function __construct() {
 		global $config;
-		if (substr(PHP_OS, 0, 3) === 'WIN' && $config["database_server"] === 'localhost') $config["database_server"] = '127.0.0.1';
+		if (substr(PHP_OS, 0, 3) === 'WIN' && $config["db"]["database_server"] === 'localhost') $config["db"]["database_server"] = '127.0.0.1';
 		$this->loadExtension('DBAPI') or die('Could not load DBAPI class.'); // load DBAPI class
 		$this->dbConfig = &$this->db->config; // alias for backward compatibility
-
+		
 	}
 
 
@@ -75,6 +75,39 @@ class DataHandler {
 		return $result;
 	}
 
+	function error($error, $die = false) {
+		$this->error = $error; // todo: logger if need
+		if ($die) die($error);
+	}
+
+	function dataOut($parameters = []) {
+		if (is_string($parameters)) $parameters = ["view" => $parameters]; // default - template name
+		$parameters = array_merge(["template" => false,
+			                          "x_request_handle" => true,
+			                          "data" => $_REQUEST], $parameters);
+		if (!empty($parameters["data"]) && !empty($parameters["x_request_handle"]) && $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest") {
+			header('Content-Type: application/json');
+			switch ($parameters["x_request_handle"]) {
+				case "getDiscounts" :
+					$data = $this->getDiscount($parameters["data"]);
+					break;
+				default:
+					$data = &$parameters["data"];
+			}
+			echo json_encode($data);
+			return true;
+		} else if ($parameters["template"]) {
+			$templateFile = BASE_PATH.'/view/'.$parameters["template"].'.php'; // todo: check for correct parameter value 
+			if (file_exists($templateFile)) {
+				if (is_array($parameters["vars"])) foreach($parameters["vars"] as $k => $v) ${$k} = $v; 
+				include_once($templateFile);
+				return true;
+			} else {
+				$this->error("$templateFile is missing",true);
+			}
+		}
+		return false;
+	}
 }
 
 ?>

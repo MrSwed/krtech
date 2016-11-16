@@ -1,12 +1,8 @@
 <?php
 
-$base_path = str_replace('\\','/',dirname(__FILE__)) . '/';
+define("BASE_PATH",str_replace('\\','/',dirname(__FILE__)) . '/');
 
-// get start time
-$mtime = microtime(); $mtime = explode(" ",$mtime); $mtime = $mtime[1] + $mtime[0]; $tstart = $mtime;
-$mstart = memory_get_usage();
-
-$rt = @include_once($base_path.'/includes/config.inc.php');
+$rt = @include_once(BASE_PATH.'/includes/config.inc.php');
 if (is_array($rt->config)) $config = $rt->config; 
 
 // Be sure config.inc.php is there and that it contains some important values
@@ -25,20 +21,12 @@ a{font-size:2em;color:#f22;text-decoration:underline;margin-top: 30px;padding: 5
 	exit;
 }
 
-$rt = include_once($base_path.'/includes/datahandler.inc.php');
+$rt = include_once(BASE_PATH.'/includes/datahandler.inc.php');
 $system = new DataHandler;
 
-$form = [];
-$form["services"] = $system->getServices();
-
-if ($_SERVER["HTTP_X_REQUESTED_WITH"]=="XMLHttpRequest") {
-	header('Content-Type: application/json');
-	$data = $system->getDiscount($_REQUEST);
-	
-	 echo json_encode($data);
-	 return true;
-} else 
-include_once($base_path.'/view/frontend.php');
-
+/* View */
+$system->dataOut(["x_request_handle" => "getDiscounts",
+	                 "template" => "frontend",
+	                 "vars" => ["form" => ["services" => $system->getServices()]]]);
 
 ?>
