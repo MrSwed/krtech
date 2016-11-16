@@ -5,7 +5,7 @@
 	<title>Форма заказа (test)</title>
 	<link rel="stylesheet" href="/styles.css">
 	<script src="/jquery-1.9.0-min.js"></script>
-	<script src="/frontlogic.js"></script>
+	<script src="/js/frontlogic.js"></script>
 </head>
 <body>
 <form action="" method="post">

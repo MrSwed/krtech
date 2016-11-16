@@ -50,12 +50,13 @@ class DataHandler {
 	}
 
 	function getDiscount($data = []) {
-		if (!is_numeric($data["birthday"])) {
-			$parsed = date_parse_from_format("Y-m-d", $data["birthday"]); // standart chrome send date
-			$data["birthday"] = mktime($parsed['hour'], $parsed['min'], $parsed['sec'], $parsed['month'], $parsed['day'], date('Y'));
-		}
 		$where = '';
-		if (is_array($data)) {
+		$result = [];
+		if (is_array($data) and !empty($data)) {
+			if (!is_numeric($data["birthday"])) {
+				$parsed = date_parse_from_format("Y-m-d", $data["birthday"]); // standart chrome send date
+				$data["birthday"] = mktime($parsed['hour'], $parsed['min'], $parsed['sec'], $parsed['month'], $parsed['day'], date('Y'));
+			}
 			if ((array)$data["services"]) {
 				$services_where = [];
 				foreach ($data["services"] as $service) $services_where[] = "`services` regexp '[^\d]?".$service."[^\d]?'";
@@ -68,9 +69,14 @@ class DataHandler {
 			    and (`gender` is null ".(!empty($data["gender"]) ? "OR gender = '".$data["gender"]."'" : "").")
 			    and (`date_start` = 0 or `date_start` <= UNIX_TIMESTAMP(now()))
 			    and (`date_end` = 0 or `date_end` > UNIX_TIMESTAMP(now())) ";
-		}
 		$select = $this->db->select("concat(MAX(percent),'%') as discount", $this->dbConfig["table_prefix"]."discounts t", $where);
 		$result = $this->db->getRow($select);
+		} else {
+			$select = $this->db->select("*", $this->dbConfig["table_prefix"]."discounts t", $where);
+			while ($r = $this->db->getRow($select)) {
+				$result[] = $r;
+			}
+		}
 		$this->db->freeResult($select);
 		return $result;
 	}
