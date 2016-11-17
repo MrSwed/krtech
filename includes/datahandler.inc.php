@@ -123,11 +123,7 @@ class DataHandler {
 		], $_REQUEST);
 		$result = [];
 		if (!$parameters["target"]) return ["error" => "no target"];
-		if (!in_array($parameters["target"], [
-			"discounts",
-			"services"
-		])
-		) return ["error" => "bad target"];
+		if (!in_array($parameters["target"], ["discounts","services"])) return ["error" => "bad target"];
 		switch ($parameters["action"]) {
 			case "get":
 				switch ($parameters["target"]) {
@@ -147,12 +143,18 @@ class DataHandler {
 				} else {
 					if ($this->db->update($parameters["data"], $parameters["target"], "id = ".$parameters["data"]["id"]))
 						$result = ["ok" => 1];
-					else $result = ["error" => "Update error: ". $this->db->getLastError()];
+					else $result = ["error" => "Update error: ".$this->db->getLastError()];
 				}
 
 				break;
 			case "del":
-//todo
+				if (empty($parameters["data"]["id"]) or empty($parameters["confirm"]))
+					$result = ["error" => "Need ID and confirm for delete"];
+				else {
+					if ($this->db->delete($parameters["target"],"id = ".$parameters["data"]["id"]))
+						$result = ["ok" => 1];
+					else $result = ["error" => "Delete error: ".$this->db->getLastError()];
+				}
 		}
 		return $result;
 	}

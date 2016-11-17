@@ -8,35 +8,41 @@ $(function(){
 			f.tb = $("tbody", f);
 			f.m = $(".message", f);
 			f.message = function(p){
-				if (!p||p.toLowerCase()=="clear") p={"clear":true}; 
-				p = $.extend({},{"text":"","class":"info","clear":false},p);
-				p.clear && $(f.m).attr("class",'message').html('');
-				p.class && $(f.m).attr("class",'message '+p.class);
+				if (!p || (typeof p == "string" && p.toLowerCase() == "clear")) p = {"clear": true};
+				p = $.extend({}, {"text": "", "class": "info", "clear": false}, p);
+				p.clear && $(f.m).attr("class", 'message').html('');
+				p.class && $(f.m).attr("class", 'message ' + p.class);
 				p.text && $(f.m).html(p.text);
+			};
+			f.ajax = function(p){
+				p = $.extend({}, {
+					type: $(f).attr("method"),
+					url: $(f).attr("action"),
+					data: false,
+					dataType: "json",
+					success: false,
+					error: function(event, request, settings){
+						f.message({"text": "Error sending request " + settings.url + "", "class": "error"});
+						console.log(event, request, settings);
+					}
+				}, p);
+				if (p.success) $.ajax(p);
 			};
 			f.init = function(){
 				$("tr:not(.template)", f.tb).remove();
 				f.message();
-				$.ajax({
-					type: $(f).attr("method"),
-					url: $(f).attr("action"),
+				f.ajax({
 					data: {"action": "get", "target": $(f).attr("data-source")},
-					dataType: "json",
 					success: function(data){
 						for (r in data) {
 							var nr = $(".template", f).clone(true).appendTo(f.tb).removeClass("template");
 							for (k in data[r]) {
-								if (k.match(/^date_/)) {
-									data[r][k] = data[r][k].split(" ")[0];
-								}
+								if (k.match(/^date_/)) data[r][k] = data[r][k].split(" ")[0];
 								var inp = $("[name='" + k + "']", nr);
 								inp.length && inp.val(data[r][k]);
 							}
 						}
-					},
-					error: function(event, request, settings){
-						f.message({"text":"Error sending request " + settings.url + "","class":"error"});
-						console.log(event, request, settings);
+						f.message({"text": "Данные загружены"});
 					}
 				});
 			};
@@ -57,8 +63,22 @@ $(function(){
 						// $("")
 						break;
 					case t.is(".del"):
-//todo:
-						rowData.remove();
+						var id = $("[name='id']", rowData).val();
+						if (confirm("Подтвердите удаление строки id#" + id)) { // todo: no confirm for new cloned or empty
+							if (id) {
+								f.ajax({
+									data: {"action": "del", "target": $(f).attr("data-source"), "data": {"id": id}, "confirm": 1},
+									success: function(result){
+										if (result["ok"]) {
+											f.message({"class": "info", "text": "Успешно удалено. id#" + id});
+											rowData.remove();
+										} else {
+											f.message({"class": "error","text": "Произошда ошибка при удалении данных" + (result["error"] ? ' <br><b>"' + result["error"] + '"</b>' : "")});
+										}
+									}
+								});
+							} else rowData.remove();
+						}
 						break;
 					case t.is(".clone"):
 						rowData.clone(true).insertAfter(rowData).find("[name]").change().filter("[name='id']").val('');
@@ -69,20 +89,18 @@ $(function(){
 						$("[name]", rowData).each(function(){
 							data[this.name] = this.value;
 						});
-						$.ajax({
-							type: $(f).attr("method"),
-							url: $(f).attr("action"),
+						f.ajax({
 							data: {"action": "save", "target": $(f).attr("data-source"), "data": data},
-							dataType: "json",
 							success: function(result){
-								console.log(result);
 								if (result["ok"]) {
 									$("[name]", rowData).removeClass("changed");
-									$(f.m).removeClass("error").addClass("info").html("Данные успешно сохранены для строки " + $(rowData).index());
 									if (result["id"]) $("[name='id']", rowData).val(result["id"]);
+									f.message({"class": "info", "text": "Успешно сохранены. id#" + result["id"]});
 								} else {
-									$(f.m).removeClass("info").addClass("error").html("Произошда ошибка при сохранении данных" + (result["error"] ? ' <br><b>"' + result["error"] + '"</b>' : ""));
-
+									f.message({
+										"class": "error",
+										"text": "Произошда ошибка при сохранении данных" + (result["error"] ? ' <br><b>"' + result["error"] + '"</b>' : "")
+									});
 								}
 							}
 						});
@@ -94,6 +112,7 @@ $(function(){
 			f.init();
 			$(".reload", f).click(function(e){
 				e.preventDefault();
+				f.message({"text": "... обновление ..."});
 				f.init();
 			});
 
