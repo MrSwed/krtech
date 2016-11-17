@@ -94,8 +94,11 @@ class DataHandler {
 			"data" => $_REQUEST
 		], $parameters);
 		if (!empty($parameters["data"]) && !empty($parameters["x_request_handle"]) && $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest") {
-			if (is_callable([$this,$parameters["x_request_handle"]],true)) {
-				$data = call_user_func_array([$this,$parameters["x_request_handle"]],[$parameters["data"]]);
+			if (is_callable([$this, $parameters["x_request_handle"]], true)) {
+				$data = call_user_func_array([
+					$this,
+					$parameters["x_request_handle"]
+				], [$parameters["data"]]);
 			} else  $data = &$parameters["data"]; // return sended data if no handle function
 			header('Content-Type: application/json');
 			echo json_encode($data);
@@ -113,6 +116,46 @@ class DataHandler {
 		return false;
 	}
 
+	function handleData() {
+		$parameters = array_merge([
+			"action" => "",
+			"target" => "",
+		], $_REQUEST);
+		$result = [];
+		if (!$parameters["target"]) return ["error" => "no target"];
+		if (!in_array($parameters["target"], [
+			"discounts",
+			"services"
+		])
+		) return ["error" => "bad target"];
+		switch ($parameters["action"]) {
+			case "get":
+				switch ($parameters["target"]) {
+					case "discounts":
+						$result = $this->getDiscounts();
+						break;
+					case "services":
+						$result = $this->getServices();
+						break;
+				}
+				break;
+			case "save":
+				if (empty($parameters["data"]["id"])) {
+					if ($nid = $this->db->insert($parameters["data"], $parameters["target"]))
+						$result = ["ok" => 1, "id" => $nid];
+					else $result = ["error" => "Insert error: ".$this->db->getLastError()];
+				} else {
+					if ($this->db->update($parameters["data"], $parameters["target"], "id = ".$parameters["data"]["id"]))
+						$result = ["ok" => 1];
+					else $result = ["error" => "Update error: ". $this->db->getLastError()];
+				}
+
+				break;
+			case "del":
+//todo
+		}
+		return $result;
+	}
 }
 
 ?>

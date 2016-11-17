@@ -25,8 +25,8 @@ $rt = include_once(BASE_PATH.'/includes/datahandler.inc.php');
 $system = new DataHandler;
 
 /* View */
-$system->dataOut(["x_request_handle" => "saveData",
+$system->dataOut(["x_request_handle" => "handleData",
 	                 "template" => "backend",
-	                 "vars" => ["form" => ["services" => $system->getServices(),"discounts" => $system->getDiscount()]]]);
+	                 "vars" => ["form" => ["services" => $system->getServices(),"discounts" => $system->getDiscounts()]]]);
 
 ?>
