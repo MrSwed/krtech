@@ -1,0 +1,21 @@
+input {
+	table & {
+		width: 100%;
+	}
+}
+.template {
+	display: none;
+}
+th {
+	&[title]:after {
+		content: ' ? ';
+		font-size: 0.8em;
+		border-bottom: 1px dotted;
+	}
+}
+.changed {
+	box-shadow: 0 0 5px red;
+}
+h2 {
+	text-align: center;
+}
