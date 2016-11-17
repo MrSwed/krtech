@@ -7,12 +7,16 @@ $(function(){
 			});
 			f.tb = $("tbody", f);
 			f.m = $(".message", f);
-			$(document).ajaxError(function(event, request, settings){
-				$(f.m).addClass("error").removeClass("info").html("Error sending request " + settings.url + "");
-				console.log(event, request, settings);
-			});
+			f.message = function(p){
+				if (!p||p.toLowerCase()=="clear") p={"clear":true}; 
+				p = $.extend({},{"text":"","class":"info","clear":false},p);
+				p.clear && $(f.m).attr("class",'message').html('');
+				p.class && $(f.m).attr("class",'message '+p.class);
+				p.text && $(f.m).html(p.text);
+			};
 			f.init = function(){
 				$("tr:not(.template)", f.tb).remove();
+				f.message();
 				$.ajax({
 					type: $(f).attr("method"),
 					url: $(f).attr("action"),
@@ -29,14 +33,14 @@ $(function(){
 								inp.length && inp.val(data[r][k]);
 							}
 						}
+					},
+					error: function(event, request, settings){
+						f.message({"text":"Error sending request " + settings.url + "","class":"error"});
+						console.log(event, request, settings);
 					}
 				});
 			};
-			f.init();
-			$(".reload", f).click(function(e){
-				e.preventDefault();
-				f.init();
-			});
+
 			// handle data
 			$("[name]", f).change(function(e){
 				$(this).addClass("changed").closest("tr").find("button.save").attr("disabled", false);
@@ -62,7 +66,9 @@ $(function(){
 					case t.is(".save"):
 						// save data
 						var data = {};
-						$("[name]", rowData).each(function(){ data[this.name] = this.value;});
+						$("[name]", rowData).each(function(){
+							data[this.name] = this.value;
+						});
 						$.ajax({
 							type: $(f).attr("method"),
 							url: $(f).attr("action"),
@@ -72,17 +78,25 @@ $(function(){
 								console.log(result);
 								if (result["ok"]) {
 									$("[name]", rowData).removeClass("changed");
-									$(f.m).removeClass("error").addClass("info").html("Данные успешно сохранены для строки "+$(rowData).index());
-									if (result["id"]) $("[name='id']",rowData).val(result["id"]);
+									$(f.m).removeClass("error").addClass("info").html("Данные успешно сохранены для строки " + $(rowData).index());
+									if (result["id"]) $("[name='id']", rowData).val(result["id"]);
 								} else {
-									$(f.m).removeClass("info").addClass("error").html("Произошда ошибка при сохранении данных"+(result["error"]?' <br><b>"'+result["error"]+'"</b>':""));
-									
+									$(f.m).removeClass("info").addClass("error").html("Произошда ошибка при сохранении данных" + (result["error"] ? ' <br><b>"' + result["error"] + '"</b>' : ""));
+
 								}
 							}
 						});
 						break;
 				}
 			});
+
+			// Init and re-init 
+			f.init();
+			$(".reload", f).click(function(e){
+				e.preventDefault();
+				f.init();
+			});
+
 		});
 	})("form");
 });
