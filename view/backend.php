@@ -31,7 +31,7 @@
 			</th>
 			<th rowspan="2">Пол</th>
 			<th colspan="2">Период действия</th>
-			<th rowspan="2" colspan="4">
+			<th rowspan="2" colspan="3">
 				<button title="Добавить" class="add"> +</button>
 			</th>
 		</tr>
@@ -71,7 +71,6 @@
 			<td><label><input type="date" name="date_end"></label></td>
 			<td><button title="Записать" class="save" disabled="disabled">Save</button></td>
 			<td><button title="Удалить" class="del"> - </button></td>
-			<td><button title="Добавить" class="add"> + </button></td>
 			<td><button title="Клонировать" class="clone"> @ </button></td>
 		</tr>
 		</tbody>
