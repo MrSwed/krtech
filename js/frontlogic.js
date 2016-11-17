@@ -4,6 +4,11 @@ $(function(){
 		var m = $(".message", f);
 		var verify = ["name", "birthday"];
 		var verifed = verify.length;
+		$(document).ajaxError(function(event, request, settings){
+			m.addClass("error").removeClass("info").html("Error sending request " + settings.url + "");
+			console.log(event, request, settings);
+		});
+		
 		f.submit(function(e){
 			e.preventDefault();
 			for (var k in verify) {
