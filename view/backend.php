@@ -26,13 +26,11 @@
 			<th rowspan="2" title="Только число">Процент скидки</th>
 			<th rowspan="2" title="Идентификаторы услуг через запятую">Услуги</th>
 			<th colspan="2">День рождения</th>
-			<th rowspan="2" title="1 - Наличие, другие цифры - соотв. последние цифры телефона">
-				Телефон
-			</th>
+			<th rowspan="2" title="1 - Наличие, другие цифры - соотв. последние цифры телефона">Телефон</th>
 			<th rowspan="2">Пол</th>
 			<th colspan="2">Период действия</th>
 			<th rowspan="2" colspan="3">
-				<button title="Добавить" class="add"> +</button>
+				<button title="Добавить" class="add"> + </button>
 			</th>
 		</tr>
 		<tr>
@@ -71,12 +69,38 @@
 			<td><label><input type="date" name="date_end"></label></td>
 			<td><button title="Записать" class="save" disabled="disabled">Save</button></td>
 			<td><button title="Удалить" class="del"> - </button></td>
-			<td><button title="Клонировать" class="clone"> @ </button></td>
+			<td><button title="Клонировать" class="clone"> &copy; </button></td>
 		</tr>
 		</tbody>
 	</table>
 </form>
-
+<? /*
+form[action="#"][method=post][data-source=services]>(h2{Услуги}>a.reload[href=#][title=Обновить]{&orarr;})+div.message+table[border=1][align=center][cellpadding=5px]>(thead>tr>th{id}+th{Название}+th[colspan=3]>button.add[title=Добавить]{ + })+tbody>tr[style="text-align: center;"][class="template"]>(td>label>input[type=text][name=id][readonly=readonly])+(td>label>input[type=text][name=name])+(td>button.save[title=Удалить][disabled=disabled]{Save})+(td>button.del[title=Удалить]{ - })+(td>button.copy[title=Клонировать]{ &copy; })
+  */?>
+<form action="#" method="post" data-source="services">
+	<h2>Услуги<a href="#" class="reload" title="Обновить">&orarr;</a></h2>
+	<div class="message"></div>
+	<table border="1" align="center" cellpadding="5px">
+		<thead>
+		<tr>
+			<th>id</th>
+			<th>Название</th>
+			<th colspan="3">
+				<button class="add" title="Добавить"> +</button>
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr style="text-align: center;" class="template">
+			<td><label><input type="text" name="id" readonly="readonly"></label></td>
+			<td><label><input type="text" name="name"></label></td>
+			<td><button class="save" title="Удалить" disabled="disabled">Save</button></td>
+			<td><button class="del" title="Удалить"> - </button></td>
+			<td><button class="copy" title="Клонировать"> &copy; </button></td>
+		</tr>
+		</tbody>
+	</table>
+</form>
 <div style="text-align: center;"><a href="/">Frontend</a></div>
 
 </body>
