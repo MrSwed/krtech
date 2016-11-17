@@ -42,7 +42,7 @@ class DataHandler {
 	}
 
 	function getServices() {
-		$select = $this->db->select("*", $this->dbConfig["table_prefix"]."services");
+		$select = $this->db->select("*", $this->dbConfig["table_prefix"]."services","","id");
 		$result = [];
 		while ($row = $this->db->getRow($select)) $result[] = $row;
 		$this->db->freeResult($select);
@@ -57,18 +57,16 @@ class DataHandler {
 				$parsed = date_parse_from_format("Y-m-d", $data["birthday"]); // standart chrome send date
 				$data["birthday"] = mktime($parsed['hour'], $parsed['min'], $parsed['sec'], $parsed['month'], $parsed['day'], date('Y'));
 			}
-			if ((array)$data["services"]) {
-				$services_where = [];
-				foreach ($data["services"] as $service) $services_where[] = "`services` regexp '[^\d]?".$service."[^\d]?'";
-			}
-			$where = // "`services` regexp '[^\d]?(".implode("|", (array)$data["services"]).")[^\d]?'
-				(!empty($services_where) ? implode(" and ", $services_where) : "services is null or services ='' ").
-				"  and (`birthday_before` is null OR (".$data["birthday"]."-UNIX_TIMESTAMP(now()) <= `birthday_before`) )
-			    and (`birthday_after` is null OR (UNIX_TIMESTAMP(now()) - ".$data["birthday"]." <= `birthday_after`) )
-			    and (`phone` is null or `phone` = '' ".(!empty($data["phone"]) ? " OR `phone` = 1 OR '".$data["phone"]."' regexp `phone`" : "")." ) 
-			    and (`gender` is null ".(!empty($data["gender"]) ? "OR gender = '".$data["gender"]."'" : "").")
-			    and (`date_start` = 0 or `date_start` <= UNIX_TIMESTAMP(now()))
-			    and (`date_end` = 0 or `date_end` > UNIX_TIMESTAMP(now())) ";
+			sort($data["services"],SORT_NUMERIC);
+			$where ="1
+	and '".implode(",",$data["services"])."' regexp concat('[^\\d]?',replace(`services`,',','[^\\d]?(\\d+[^\\d]?)*'),'[^\\d]?')
+ and (`birthday_before` is null or `birthday_before` = '' or (".$data["birthday"]." - UNIX_TIMESTAMP(now()) <= `birthday_before`) )
+ and (`birthday_after` is null or `birthday_after` = '' or (UNIX_TIMESTAMP(now()) - ".$data["birthday"]." <= `birthday_after`) )
+ and (`phone` is null or `phone` = '' ".(!empty($data["phone"]) ? " or `phone` = 1 or '".$data["phone"]."' regexp concat(`phone`,'$')" : "")." ) 
+ and (`gender` is null or gender = '' ".(!empty($data["gender"]) ? "or gender = '".$data["gender"]."'" : "").")
+ and (`date_start` = 0 or `date_start` <= now())
+ and (`date_end` = 0 or `date_end` > now())
+";
 			$select = $this->db->select("concat(MAX(percent),'%') as discount", $this->dbConfig["table_prefix"]."discounts t", $where);
 			$result = $this->db->getRow($select);
 		} else {

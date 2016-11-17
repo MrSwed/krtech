@@ -49,7 +49,14 @@ $(function(){
 
 			// handle data
 			$("[name]", f).change(function(e){
-				$(this).addClass("changed").closest("tr").find("button.save").attr("disabled", false);
+				var t = $(this);
+				t.addClass("changed").closest("tr").find("button.save").attr("disabled", false);
+				if (t.is("[data-type]")) {
+					switch (t.attr("data-type")) {
+						// strict order of services ids
+						case "numbers-sort-list": t.val($.unique(t.val().split(/[^\d]+/)).sort(function(a,b){return a*1>b*1?1:-1;}).join(","));break;
+					}
+				}
 			});
 			$(f).on("click", "button", function(e){
 				e.preventDefault();
@@ -94,8 +101,10 @@ $(function(){
 							success: function(result){
 								if (result["ok"]) {
 									$("[name]", rowData).removeClass("changed");
+									rowData.find("button.save").attr("disabled", true);
 									if (result["id"]) $("[name='id']", rowData).val(result["id"]);
-									f.message({"class": "info", "text": "Успешно сохранены. id#" + result["id"]});
+									else result["id"] = $("[name='id']", rowData).val();
+									f.message({"class": "info", "text": "Успешно сохранено. id#" + result["id"]});
 								} else {
 									f.message({
 										"class": "error",

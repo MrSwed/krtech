@@ -44,7 +44,7 @@
 		<tr style="text-align: center;" class="template">
 			<td><label><input type="text" name="id" readonly="readonly"></label></td>
 			<td><label><input type="text" name="percent"></label></td>
-			<td><label><input type="text" name="services"></label></td>
+			<td><label><input type="text" name="services" data-type="numbers-sort-list"></label></td>
 			<td><label><select name="birthday_before">
 						<option value=""></option>
 						<option value="86400">Сутки</option>
