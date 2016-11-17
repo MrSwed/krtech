@@ -22,7 +22,7 @@ class DataHandler {
 		if (substr(PHP_OS, 0, 3) === 'WIN' && $config["db"]["database_server"] === 'localhost') $config["db"]["database_server"] = '127.0.0.1';
 		$this->loadExtension('DBAPI') or die('Could not load DBAPI class.'); // load DBAPI class
 		$this->dbConfig = &$this->db->config; // alias for backward compatibility
-		
+
 	}
 
 
@@ -49,7 +49,7 @@ class DataHandler {
 		return $result;
 	}
 
-	function getDiscount($data = []) {
+	function getDiscounts($data = []) {
 		$where = '';
 		$result = [];
 		if (is_array($data) and !empty($data)) {
@@ -69,8 +69,8 @@ class DataHandler {
 			    and (`gender` is null ".(!empty($data["gender"]) ? "OR gender = '".$data["gender"]."'" : "").")
 			    and (`date_start` = 0 or `date_start` <= UNIX_TIMESTAMP(now()))
 			    and (`date_end` = 0 or `date_end` > UNIX_TIMESTAMP(now())) ";
-		$select = $this->db->select("concat(MAX(percent),'%') as discount", $this->dbConfig["table_prefix"]."discounts t", $where);
-		$result = $this->db->getRow($select);
+			$select = $this->db->select("concat(MAX(percent),'%') as discount", $this->dbConfig["table_prefix"]."discounts t", $where);
+			$result = $this->db->getRow($select);
 		} else {
 			$select = $this->db->select("*", $this->dbConfig["table_prefix"]."discounts t", $where);
 			while ($r = $this->db->getRow($select)) {
@@ -88,32 +88,31 @@ class DataHandler {
 
 	function dataOut($parameters = []) {
 		if (is_string($parameters)) $parameters = ["view" => $parameters]; // default - template name
-		$parameters = array_merge(["template" => false,
-			                          "x_request_handle" => true,
-			                          "data" => $_REQUEST], $parameters);
+		$parameters = array_merge([
+			"template" => false,
+			"x_request_handle" => true,
+			"data" => $_REQUEST
+		], $parameters);
 		if (!empty($parameters["data"]) && !empty($parameters["x_request_handle"]) && $_SERVER["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest") {
+			if (is_callable([$this,$parameters["x_request_handle"]],true)) {
+				$data = call_user_func_array([$this,$parameters["x_request_handle"]],[$parameters["data"]]);
+			} else  $data = &$parameters["data"]; // return sended data if no handle function
 			header('Content-Type: application/json');
-			switch ($parameters["x_request_handle"]) {
-				case "getDiscounts" :
-					$data = $this->getDiscount($parameters["data"]);
-					break;
-				default:
-					$data = &$parameters["data"];
-			}
 			echo json_encode($data);
 			return true;
 		} else if ($parameters["template"]) {
 			$templateFile = BASE_PATH.'/view/'.$parameters["template"].'.php'; // todo: check for correct parameter value 
 			if (file_exists($templateFile)) {
-				if (is_array($parameters["vars"])) foreach($parameters["vars"] as $k => $v) ${$k} = $v; 
+				if (is_array($parameters["vars"])) foreach ($parameters["vars"] as $k => $v) ${$k} = $v;
 				include_once($templateFile);
 				return true;
 			} else {
-				$this->error("$templateFile is missing",true);
+				$this->error("$templateFile is missing", true);
 			}
 		}
 		return false;
 	}
+
 }
 
 ?>
