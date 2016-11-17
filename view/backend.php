@@ -75,10 +75,10 @@
 	</table>
 </form>
 <? /*
-form[action="#"][method=post][data-source=services]>(h2{Услуги}>a.reload[href=#][title=Обновить]{&orarr;})+div.message+table[border=1][align=center][cellpadding=5px]>(thead>tr>th{id}+th{Название}+th[colspan=3]>button.add[title=Добавить]{ + })+tbody>tr[style="text-align: center;"][class="template"]>(td>label>input[type=text][name=id][readonly=readonly])+(td>label>input[type=text][name=name])+(td>button.save[title=Удалить][disabled=disabled]{Save})+(td>button.del[title=Удалить]{ - })+(td>button.copy[title=Клонировать]{ &copy; })
+form[method=post][data-source=services]>(h2{Услуги }>a.reload[href=#][title=Обновить]{&orarr;})+div.message+table[border=1][align=center][cellpadding=5px]>(thead>tr>th{id}+th{Название}+th[colspan=3]>button.add[title=Добавить]{ + })+tbody>tr[style="text-align: center;"][class="template"]>(td>label>input[type=text][name=id][readonly=readonly])+(td>label>input[type=text][name=name])+(td>button.save[title=Удалить][disabled=disabled]{Save})+(td>button.del[title=Удалить]{ - })+(td>button.copy[title=Клонировать]{ &copy; })
   */?>
-<form action="#" method="post" data-source="services">
-	<h2>Услуги<a href="#" class="reload" title="Обновить">&orarr;</a></h2>
+<form action="" method="post" data-source="services">
+	<h2>Услуги <a href="#" class="reload" title="Обновить">&orarr;</a></h2>
 	<div class="message"></div>
 	<table border="1" align="center" cellpadding="5px">
 		<thead>
