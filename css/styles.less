@@ -1,3 +1,9 @@
+* {
+	&, &:after, &:before {
+		box-sizing: border-box;
+		max-width: 100%;
+	}
+}
 .table {
 	display: table;
 	border-spacing: 1em;
@@ -12,17 +18,14 @@
 label {
 	display: block;
 }
-
-.required >*:first-child{
+.required > *:first-child {
 	&:before {
-		content:'*';
+		content: '*';
 	}
 }
-
 .message {
 	text-align: center;
 }
-
 .error {
 	color: red;
 }
