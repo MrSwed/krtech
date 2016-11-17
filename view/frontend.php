@@ -14,8 +14,8 @@
 			<span><input type="text" name="name" value="<?=$form["name"];?>"></span></label>
 		<div><span>Услуги</span>
 			<span><? if (is_array($form["services"]))
-				foreach ($form["services"] as $service_k => $service_n) {
-					?><label><input type="checkbox" name="services[]" value="<?=$service_k?>"><?=$service_n?></label><?
+				foreach ($form["services"] as $service) {
+					?><label><input type="checkbox" name="services[]" value="<?=$service["id"]?>"><?=$service["name"]?></label><?
 				} ?></span>
 		</div>
 		<label class="required"><span>Дата рождения</span>

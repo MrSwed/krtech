@@ -44,7 +44,7 @@ class DataHandler {
 	function getServices() {
 		$select = $this->db->select("*", $this->dbConfig["table_prefix"]."services");
 		$result = [];
-		while ($row = $this->db->getRow($select)) $result[$row["id"]] = $row["name"];
+		while ($row = $this->db->getRow($select)) $result[] = $row;
 		$this->db->freeResult($select);
 		return $result;
 	}
