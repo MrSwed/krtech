@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8"/>
 	<title>Форма заказа (test)</title>
-	<link rel="stylesheet" href="/styles.css">
+	<link rel="stylesheet" href="/css/styles.css">
 	<script src="/jquery-1.9.0-min.js"></script>
 	<script src="/js/frontlogic.js"></script>
 </head>
@@ -30,5 +30,6 @@
 	</div>
 	<div class="message"></div>
 </form>
+<div style="text-align: center;"><a href="/admin.php">Управление данными</a></div>
 </body>
 </html>
