@@ -17,8 +17,6 @@ $(function(){
 					data: f.serialize(),
 					dataType: "json",
 					success: function(data){
-						console.log(data["discount"]);
-						console.log(data);
 						m.addClass("info").html(data["discount"] ? "Вы можете расчитывать на скидку " + data["discount"] + "!": "Нет доступных скидок.:( ");
 					}
 				});
